@@ -1,4 +1,4 @@
-# Final year project
+# Final year project ##### 0.0.1
 
 #### 🚀 How to start development server
 🖇️ **Clone it** ```git clone https://github.com/final-year-project```
@@ -17,6 +17,13 @@ Edit ```src/routes/+page.svelte``` file
 
 #### 🧮 Want to edit the algorithm?
 Edit files in ```src/lib/ts``` folder
+
+#### ⚒️ Libraries used in this project
+- **SvelteKit** for the application
+- **TailwindCSS** for CSS
+- **DaisyUI** for the UI
+- **Supabase** for database
+- **Capacitor** for compile it to app
 
 ## 🆕 How to push updates?
 > NOTE: The **main** branch is protected from pushing code to it.
