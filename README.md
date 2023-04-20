@@ -2,6 +2,7 @@
 
 #### 🚀 How to start development server
 🖇️ **Clone it** ```git clone https://github.com/final-year-project```
+
 📑 **Paste the following command**
 ```bash
 cd final-year-project/ && npm i
@@ -25,5 +26,7 @@ Edit files in ```src/lib/ts``` folder
 
 ### 👥 Team members
 [Triasis Ghosh](https://github.com/triasisghosh)
+
 [Dipanjan Das](https://github.com/dipanjan2910)
+
 [Shirshashish Sarkar](https://github.com/insaneaqua234)
