@@ -1,4 +1,4 @@
-# Final year project ##### 0.0.1
+# Final year project
 
 #### 🚀 How to start development server
 🖇️ **Clone it** ```git clone https://github.com/final-year-project```
