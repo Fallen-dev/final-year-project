@@ -156,7 +156,7 @@
 		padding: 0.75rem 1.5rem;
 
 		&.active {
-			@apply text-primary-500 variant-glass-primary;
+			@apply text-primary-900 variant-filled-primary;
 		}
 	}
 
