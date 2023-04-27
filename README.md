@@ -1,16 +1,33 @@
 # Final year project
 
 #### 🚀 How to start development server
-🖇️ **Clone it** ```git clone https://github.com/final-year-project```
+🖇️ **Clone it**
+```bash
+git clone https://github.com/final-year-project
+```
 
 📑 **Paste the following command**
 ```bash
 cd final-year-project/ && npm i
 ```
-🌐 **Open ```localhost:3000``` in a browser**
 
-#### 💻 Frontend
+> See the ```package.json``` file for scripts
+
+
+🌐 **Run the dev server***
+```bash
+npm run dev
+```
+
+**Open ```localhost:3000``` in your browser**
+
+#### 💻 Application
 Check the ```src``` folder.
+
+#### 🧪 Testing
+We use [playwright](https://playwright.dev) for end-to-end testing for our app.
+
+check the ```tests``` folder.
 
 #### 🏠 Want to edit the homepage?
 Edit ```src/routes/+page.svelte``` file
@@ -19,11 +36,11 @@ Edit ```src/routes/+page.svelte``` file
 Edit files in ```src/lib/ts``` folder
 
 #### ⚒️ Libraries used in this project
-- **SvelteKit** for the application
-- **TailwindCSS** for CSS
-- **DaisyUI** for the UI
-- **Supabase** for database
-- **Capacitor** for compile it to app
+- **[SvelteKit](https://kit.svelte.dev)** for the frontend app
+- **[TailwindCSS](https://tailwindcss.com)** for utility CSS
+- **[SkeletonUI](https://skeleton.dev)** for the frontend UI
+- **[Supabase](https://supabase.com)** for database and authentication
+- **[CapacitorJS](https://capacitorjs.com)** for building corss platform apps
 
 ## 🆕 How to push updates?
 > NOTE: The **main** branch is protected from pushing code to it.
