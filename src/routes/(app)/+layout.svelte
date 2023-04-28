@@ -179,7 +179,7 @@
 	}
 
 	#sidebar section a.active {
-		@apply text-primary-500 variant-glass-primary;
+		@apply bg-secondary-500;
 	}
 
 	#classDetails p,
