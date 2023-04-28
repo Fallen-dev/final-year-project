@@ -8,22 +8,24 @@
 	import { AppShell } from '@skeletonlabs/skeleton'
 	import { page } from '$app/stores'
 
+	import type { PageData } from './$types'
+
+	import FlashSvg from '$lib/icons/FlashSVG.svelte'
+	import CalenderSvg from '$lib/icons/CalenderSVG.svelte'
+	import BookmarkSvg from '$lib/icons/BookmarkSVG.svelte'
+	import ProfileSvg from '$lib/icons/ProfileSVG.svelte'
+	import AddSvg from '$lib/icons/AddSVG.svelte'
+
 	const routes = [
 		{
 			name: 'Dashboard',
 			path: '/',
-			icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-</svg>
-`
+			icon: `<FlashSvg />`
 		},
 		{
 			name: 'My Schedule',
 			path: '/schedule',
-			icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-</svg>
-`
+			icon: `<CalenderSvg filled=${false} />`
 		},
 		{
 			name: 'My Course',
@@ -43,7 +45,9 @@
 		}
 	]
 
-	const addIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none"><path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/><path fill="currentColor" d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2Zm0 5a1 1 0 0 0-.993.883L11 8v3H8a1 1 0 0 0-.117 1.993L8 13h3v3a1 1 0 0 0 1.993.117L13 16v-3h3a1 1 0 0 0 .117-1.993L16 11h-3V8a1 1 0 0 0-1-1Z"/></g></svg>`
+	const addIcon = `<svg xmlns="http://www.w3.org/2000/svg" {width} height={width} viewBox="0 0 24 24"><g fill="none"><path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/><path fill="currentColor" d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2Zm0 5a1 1 0 0 0-.993.883L11 8v3H8a1 1 0 0 0-.117 1.993L8 13h3v3a1 1 0 0 0 1.993.117L13 16v-3h3a1 1 0 0 0 .117-1.993L16 11h-3V8a1 1 0 0 0-1-1Z"/></g></svg>`
+
+	$: path = $page.url.pathname
 
 	function initials(name: string, arg?: { period: boolean }): string {
 		arg = arg || { period: false }
@@ -54,7 +58,7 @@
 			.join(arg.period ? '.' : '')
 	}
 
-	export let data
+	export let data: PageData
 
 	const name = data.user.split(';')[0] || 'John Doe'
 	const role = data.user.split(';')[2] || 'Developer'
@@ -76,18 +80,36 @@
 				</section>
 				<hr />
 				<section class="-mx-6 space-y-4">
-					{#each routes as route}
-						<a href={route.path} class:active={$page.url.pathname === route.path}
-							>{#if route.icon}{@html route.icon}{/if}
-							{route.name}</a
-						>
-					{/each}
+					<!-- Dashboard / Home -->
+					<a href="/" class:active={path === '/'}>
+						<FlashSvg filled={path === '/'} />
+						Dashboard
+					</a>
+					<!-- Schedule -->
+					<a href="/schedule" class:active={path === '/schedule'}>
+						<CalenderSvg filled={path === '/schedule'} />
+						My schedule
+					</a>
+					<!-- Subjects -->
+					<a href="/course" class:active={path === '/course'}>
+						<BookmarkSvg filled={path === '/course'} />
+						My courses
+					</a>
+					<!-- Profile -->
+					<a href="/profile" class:active={path === '/profile'}>
+						<ProfileSvg filled={path === '/profile'} />
+						My profile
+					</a>
 				</section>
 				<section>
-					<button class="btn variant-filled-secondary capitalize">
-						<span>{@html addIcon}</span>
-						<span>Create</span>
-					</button>
+					<a
+						href="/"
+						type="button"
+						class="btn btn-lg !gap-0 flex-col variant-filled-secondary capitalize"
+					>
+						<AddSvg width="40" filled={true} />
+						Create
+					</a>
 				</section>
 			</div>
 		</div>
@@ -138,7 +160,7 @@
 	<!-- ---- / ---- -->
 </AppShell>
 
-<style lang="scss">
+<style lang="postcss">
 	#sidebar {
 		@apply min-h-full w-64 p-6 bg-surface-800;
 	}
@@ -154,14 +176,13 @@
 		font-weight: 500;
 
 		padding: 0.75rem 1.5rem;
+	}
 
-		&.active {
-			@apply text-primary-500 variant-glass-primary;
-		}
+	#sidebar section a.active {
+		@apply text-primary-500 variant-glass-primary;
 	}
 
 	#classDetails p,
-	#classDetails div,
 	#classDetails span {
 		@apply text-xs font-semibold;
 	}
