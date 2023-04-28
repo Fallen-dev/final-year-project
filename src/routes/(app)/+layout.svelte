@@ -6,48 +6,21 @@
 	// Most of your app wide CSS should be put in this file
 	import '../../app.postcss'
 	import { AppShell } from '@skeletonlabs/skeleton'
-	import { page } from '$app/stores'
 
+	import { page } from '$app/stores'
 	import type { PageData } from './$types'
+	import { enhance } from '$app/forms'
+	import { fly } from 'svelte/transition'
 
 	import FlashSvg from '$lib/icons/FlashSVG.svelte'
 	import CalenderSvg from '$lib/icons/CalenderSVG.svelte'
 	import BookmarkSvg from '$lib/icons/BookmarkSVG.svelte'
 	import ProfileSvg from '$lib/icons/ProfileSVG.svelte'
 	import AddSvg from '$lib/icons/AddSVG.svelte'
-
-	const routes = [
-		{
-			name: 'Dashboard',
-			path: '/',
-			icon: `<FlashSvg />`
-		},
-		{
-			name: 'My Schedule',
-			path: '/schedule',
-			icon: `<CalenderSvg filled=${false} />`
-		},
-		{
-			name: 'My Course',
-			path: '/course',
-			icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-</svg>
-`
-		},
-		{
-			name: 'My Profile',
-			path: '/profile',
-			icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-</svg>
-`
-		}
-	]
-
-	const addIcon = `<svg xmlns="http://www.w3.org/2000/svg" {width} height={width} viewBox="0 0 24 24"><g fill="none"><path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/><path fill="currentColor" d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2Zm0 5a1 1 0 0 0-.993.883L11 8v3H8a1 1 0 0 0-.117 1.993L8 13h3v3a1 1 0 0 0 1.993.117L13 16v-3h3a1 1 0 0 0 .117-1.993L16 11h-3V8a1 1 0 0 0-1-1Z"/></g></svg>`
-
-	$: path = $page.url.pathname
+	import MessageSvg from '$lib/icons/MessageSVG.svelte'
+	import BellSvg from '$lib/icons/BellSVG.svelte'
+	import SendSvg from '$lib/icons/SendSVG.svelte'
+	import { afterUpdate } from 'svelte'
 
 	function initials(name: string, arg?: { period: boolean }): string {
 		arg = arg || { period: false }
@@ -58,10 +31,17 @@
 			.join(arg.period ? '.' : '')
 	}
 
+	$: path = $page.url.pathname
+
 	export let data: PageData
 
 	const name = data.user.split(';')[0] || 'John Doe'
 	const role = data.user.split(';')[2] || 'Developer'
+
+	let showMessage = false
+	let div: HTMLDivElement
+
+	afterUpdate(() => div.scrollTo(0, div.scrollHeight))
 </script>
 
 <!-- App Shell -->
@@ -114,49 +94,56 @@
 			</div>
 		</div>
 	</svelte:fragment>
+	<!-- Router Slot -->
+	<slot />
+	<!-- Right side bar -->
 	<svelte:fragment slot="sidebarRight">
-		<div id="sidebar">
-			<section>
-				<h4 class="mb-3">Upcoming classes</h4>
-				<div class="variant-glass py-2 px-3 rounded-md">
-					<h6>Subject name</h6>
-					<p class="!text-sm font-medium text-surface-100/60">PCC CS-592</p>
-					<div id="classDetails" class="mt-2 flex flex-wrap gap-2 justify-between items-center">
-						<p class="chip variant-soft">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-								><g fill="none" fill-rule="evenodd"
-									><path
-										d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"
-									/><path
-										fill="currentColor"
-										d="M10.772 2.688a2 2 0 0 1 2.456 0l8.384 6.52c.753.587.337 1.792-.615 1.792H20v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8h-.997c-.953 0-1.367-1.206-.615-1.791l8.384-6.52ZM5.625 9.225c.229.185.375.468.375.785V19h12v-8.99c0-.317.146-.6.375-.785L12 4.267L5.625 9.225Z"
-									/></g
-								></svg
-							>
-							<span>#N304</span>
-						</p>
-						<p class="chip variant-soft">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-								><g fill="none"
-									><path
-										d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"
-									/><path
-										fill="currentColor"
-										d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2Zm0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16Zm0 2a1 1 0 0 1 .993.883L13 7v4.586l2.707 2.707a1 1 0 0 1-1.32 1.497l-.094-.083l-3-3a1 1 0 0 1-.284-.576L11 12V7a1 1 0 0 1 1-1Z"
-									/></g
-								></svg
-							>
-							<span>10:30</span>
-						</p>
-					</div>
+		<div id="sidebar" class="flex flex-col gap-6">
+			<section class="flex justify-between items-center">
+				<a href="/" id="logo" class="unstyled font-semibold text-xl">FYP24</a>
+				<div class="space-x-4">
+					<button on:click={() => (showMessage = !showMessage)}
+						><MessageSvg filled={showMessage} /></button
+					>
+					<button><BellSvg /></button>
 				</div>
 			</section>
+			<hr />
+			<!-- message -->
+			{#if showMessage}
+				<section transition:fly={{ x: 200 }}>
+					<div class="bg-surface-900 p-3 rounded-xl h-60 overflow--hidden">
+						<div class="overflow-y-scroll space-y-4 h-full" bind:this={div}>
+							{#if data.messages}
+								{#each data.messages && data.messages as { user, message, created_at }}
+									<div class="flex flex-col gap-2">
+										<div class="flex items-center gap-1 [&>*]:!text-xs font-semibold">
+											<p class="text-primary-600">{user.split(' ')[0]}</p>
+											<!-- TODO: Add readable timestamp -->
+											<p class="text-surface-100/40">
+												<span>&bullet;</span>
+												<span>date here</span>
+											</p>
+										</div>
+										<p class="unstyled text-xs font-medium">{message}</p>
+										<hr />
+									</div>
+								{/each}
+							{:else}
+								<h4>No messages</h4>
+							{/if}
+						</div>
+					</div>
+					<form action="?/send" method="post" class="pt-3 flex justify-between gap-2" use:enhance>
+						<input type="text" name="message" placeholder="Type a message" class="input" />
+						<button class="btn-icon flex-shrink-0 rotate-45 variant-filled-surface"
+							><SendSvg /></button
+						>
+					</form>
+				</section>
+			{/if}
 		</div>
 	</svelte:fragment>
-	<!-- Router Slot -->
-	<div class="hide-scrollbar">
-		<slot />
-	</div>
 	<!-- ---- / ---- -->
 </AppShell>
 
@@ -167,7 +154,7 @@
 	#sidebar section > * + * {
 		margin-top: 0.25rem;
 	}
-	#sidebar section a {
+	#sidebar section a:not(#logo) {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -180,10 +167,5 @@
 
 	#sidebar section a.active {
 		@apply bg-secondary-500;
-	}
-
-	#classDetails p,
-	#classDetails span {
-		@apply text-xs font-semibold;
 	}
 </style>

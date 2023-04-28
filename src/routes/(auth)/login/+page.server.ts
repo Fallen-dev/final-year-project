@@ -9,9 +9,9 @@ export const actions = {
 		const role = data.get('role')
 
 		if (email && name && role) {
-      cookies.set('user', `${name};${email};${role}`)
-      throw redirect(302, '/')
-    }
+			cookies.set('user', `${name};${email};${role}`)
+			throw redirect(302, '/')
+		}
 
 		return fail(400, { message: 'You must fill all the inputs' })
 	}
