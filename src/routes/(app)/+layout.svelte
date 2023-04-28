@@ -5,7 +5,7 @@
 	import '@skeletonlabs/skeleton/styles/all.css'
 	// Most of your app wide CSS should be put in this file
 	import '../../app.postcss'
-	import { AppShell } from '@skeletonlabs/skeleton'
+	import { AppShell, Toast } from '@skeletonlabs/skeleton'
 
 	import { page } from '$app/stores'
 	import type { PageData } from './$types'
@@ -21,6 +21,8 @@
 	import BellSvg from '$lib/icons/BellSVG.svelte'
 	import SendSvg from '$lib/icons/SendSVG.svelte'
 	import { afterUpdate } from 'svelte'
+	import { browser } from '$app/environment'
+	import DatabaseSvg from '$lib/icons/DatabaseSVG.svelte'
 
 	function initials(name: string, arg?: { period: boolean }): string {
 		arg = arg || { period: false }
@@ -41,8 +43,10 @@
 	let showMessage = false
 	let div: HTMLDivElement
 
-	afterUpdate(() => div.scrollTo(0, div.scrollHeight))
+	if (browser) afterUpdate(() => div?.scrollTo(0, div?.scrollHeight))
 </script>
+
+<Toast />
 
 <!-- App Shell -->
 <AppShell>
@@ -74,6 +78,11 @@
 					<a href="/course" class:active={path === '/course'}>
 						<BookmarkSvg filled={path === '/course'} />
 						My courses
+					</a>
+					<!-- Database -->
+					<a href="/database" class:active={path === '/database'}>
+						<DatabaseSvg filled={path === '/database'} />
+						Database
 					</a>
 					<!-- Profile -->
 					<a href="/profile" class:active={path === '/profile'}>
@@ -134,7 +143,7 @@
 							{/if}
 						</div>
 					</div>
-					<form action="?/send" method="post" class="pt-3 flex justify-between gap-2" use:enhance>
+					<form action="/?/send" method="post" class="pt-3 flex justify-between gap-2" use:enhance>
 						<input type="text" name="message" placeholder="Type a message" class="input" />
 						<button class="btn-icon flex-shrink-0 rotate-45 variant-filled-surface"
 							><SendSvg /></button

@@ -152,7 +152,7 @@
 
 <style lang="scss">
 	#subject {
-		@apply bg-tertiary-600 rounded-lg p-3 font-medium;
+		@apply bg-gradient-to-b from-tertiary-600/80 from-40% via-tertiary-900 to-transparent rounded-lg p-3 font-medium;
 
 		& .name {
 			font-weight: 600;
