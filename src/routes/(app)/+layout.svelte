@@ -5,10 +5,10 @@
 	import '@skeletonlabs/skeleton/styles/all.css'
 	// Most of your app wide CSS should be put in this file
 	import '../../app.postcss'
-	import { AppShell, Toast } from '@skeletonlabs/skeleton'
+	import { AppShell, Toast, toastStore, type ToastSettings } from '@skeletonlabs/skeleton'
 
 	import { page } from '$app/stores'
-	import type { PageData } from './$types'
+	import type { ActionData, PageData } from './$types'
 	import { enhance } from '$app/forms'
 	import { fly } from 'svelte/transition'
 
@@ -23,6 +23,7 @@
 	import { afterUpdate } from 'svelte'
 	import { browser } from '$app/environment'
 	import DatabaseSvg from '$lib/icons/DatabaseSVG.svelte'
+	import { messenger } from '$lib/ts/store/messenger'
 
 	function initials(name: string, arg?: { period: boolean }): string {
 		arg = arg || { period: false }
@@ -36,14 +37,23 @@
 	$: path = $page.url.pathname
 
 	export let data: PageData
+	export let form: ActionData
 
 	const name = data.user.split(';')[0] || 'John Doe'
 	const role = data.user.split(';')[2] || 'Developer'
 
+	const errorMSG: ToastSettings = {
+		message: form?.error || 'Something went wrong',
+		background: 'variant-filled-error'
+	}
+
 	let showMessage = false
 	let div: HTMLDivElement
+	let text: string
 
 	if (browser) afterUpdate(() => div?.scrollTo(0, div?.scrollHeight))
+
+	if (form?.error) toastStore.trigger(errorMSG)
 </script>
 
 <Toast />
@@ -123,8 +133,8 @@
 				<section transition:fly={{ x: 200 }}>
 					<div class="bg-surface-900 p-3 rounded-xl h-60 overflow--hidden">
 						<div class="overflow-y-scroll space-y-4 h-full" bind:this={div}>
-							{#if data.messages}
-								{#each data.messages && data.messages as { user, message, created_at }}
+							{#if data.messages.length > 0}
+								{#each data.messages as { user, message, created_at }}
 									<div class="flex flex-col gap-2">
 										<div class="flex items-center gap-1 [&>*]:!text-xs font-semibold">
 											<p class="text-primary-600">{user.split(' ')[0]}</p>
@@ -139,16 +149,46 @@
 									</div>
 								{/each}
 							{:else}
-								<h4>No messages</h4>
+								<h4 class="h-full grid place-content-center">No messages</h4>
 							{/if}
 						</div>
 					</div>
 					<form action="/?/send" method="post" class="pt-3 flex justify-between gap-2" use:enhance>
-						<input type="text" name="message" placeholder="Type a message" class="input" />
-						<button class="btn-icon flex-shrink-0 rotate-45 variant-filled-surface"
-							><SendSvg /></button
+						<input
+							type="text"
+							name="message"
+							placeholder="Type a message"
+							class="input"
+							bind:value={text}
+						/>
+						<button
+							class="btn-icon flex-shrink-0 rotate-45 variant-filled-surface"
+							disabled={!text || !text.trim().length}><SendSvg /></button
 						>
 					</form>
+				</section>
+			{/if}
+			{#if $messenger?.id}
+				<section transition:fly={{ x: 200 }}>
+					<div class="variant-soft-warning p-3 rounded-xl space-y-3">
+						<h6>Do you want to delete the selected message?</h6>
+						<div class="variant-filled-surface px-3 py-2 rounded-xl">
+							<p class="unstyled text-xs font-semibold mb-1">
+								{$messenger.user} &bullet; id {$messenger.id}
+							</p>
+							<p class="unstyled text-sm font-medium">{$messenger.message}</p>
+						</div>
+						<div class="flex justify-end items-center gap-3">
+							<form method="post" action="/database?/deleteMessage">
+								<button class="btn btn-sm variant-filled-primary" name="id" value={$messenger.id}
+									>Yes</button
+								>
+							</form>
+							<button class="btn btn-sm variant-ringed-primary" on:click={() => messenger.set(null)}
+								>No</button
+							>
+						</div>
+					</div>
 				</section>
 			{/if}
 		</div>
