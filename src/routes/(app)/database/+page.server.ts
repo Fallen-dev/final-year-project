@@ -1,18 +1,20 @@
-import { db } from "$lib/db";
-import { fail } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types";
+import { db } from '$lib/db'
+import { fail, redirect } from '@sveltejs/kit'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async () => {
-  const {data: messages, error} = await db.from('messages').select('*')
-  const {data: faculties} = await db.from('Faculty').select('*')
-  
-  if (error) return fail(500, {error: 'Could not fetch data at the moment'})
+export const load: PageServerLoad = async ({ cookies }) => {
+	if (cookies.get('online') === 'false') throw redirect(303, '/')
 
-  return {
-    messages,
-    faculties
-  }
-};
+	const { data: messages, error } = await db.from('messages').select('*')
+	const { data: faculties } = await db.from('Faculty').select('*')
+
+	if (error) return fail(500, { error: 'Could not fetch data at the moment' })
+
+	return {
+		messages,
+		faculties
+	}
+}
 
 export const actions: Actions = {
 	deleteMessage: async ({ request }) => {
@@ -23,4 +25,4 @@ export const actions: Actions = {
 
 		return { messageDeletedSuccess: true }
 	}
-};
+}

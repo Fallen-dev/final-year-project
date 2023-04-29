@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Time from 'svelte-time'
+
 	const hours = ['10:30', '11:30', '12:30', '13:30', '14:00', '15:00', '16:00', '17:00'] as string[]
 
 	const days = ['mon', 'tue', 'wed', 'thu', 'fri'] as string[]
@@ -113,11 +115,15 @@
 </script>
 
 <section class="container p-6">
-	<h3>{new Date().toDateString()}</h3>
+	<h3>
+		<Time live={60000} format="ddd, MMM D • hh:mm a" />
+	</h3>
 	<div class="my-6" />
 	<!-- Table -->
-	<div class="bg-surface-800/40 backdrop-blur-lg rounded-lg p-6 min-h-[400px] overflow-x-hidden">
-		<div id="table" class="hide-scrollbar">
+	<div
+		class="bg-surface-300/20 dark:bg-surface-800/20 backdrop-blur-lg rounded-token p-6 min-h-[400px] overflow-hidden"
+	>
+		<div id="table">
 			<!-- columns -->
 			<p>&nbsp;</p>
 			{#each hours as hour}
@@ -125,7 +131,9 @@
 			{/each}
 			<!-- rows -->
 			{#each days as day, i}
-				<p class="row-start-{++i + 1} row-end-{i + 1} col-start-1 capitalize font-medium">{day}</p>
+				<p class="row-start-{++i + 1} row-end-{i + 1} col-start-1 capitalize font-medium">
+					{day}
+				</p>
 			{/each}
 			<!-- subjects -->
 			{#each subjects as subject}
@@ -152,7 +160,7 @@
 
 <style lang="scss">
 	#subject {
-		@apply bg-gradient-to-b from-tertiary-600/80 from-40% via-tertiary-900 to-transparent rounded-lg p-3 font-medium;
+		@apply bg-secondary-backdrop-token rounded-lg p-3 font-medium;
 
 		& .name {
 			font-weight: 600;
@@ -168,6 +176,6 @@
 		grid-template-columns: 4rem repeat(8, minmax(6rem, auto));
 		grid-template-rows: 3rem repeat(5, minmax(4rem, auto));
 		gap: 0.5rem;
-		overflow: scroll;
+		overflow-x: scroll;
 	}
 </style>

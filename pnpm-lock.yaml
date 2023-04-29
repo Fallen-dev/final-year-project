@@ -31,6 +31,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.14
     version: 10.4.14(postcss@8.4.23)
+  dayjs:
+    specifier: ^1.11.7
+    version: 1.11.7
   eslint:
     specifier: ^8.28.0
     version: 8.39.0
@@ -40,6 +43,9 @@ devDependencies:
   eslint-plugin-svelte3:
     specifier: ^4.0.0
     version: 4.0.0(eslint@8.39.0)(svelte@3.58.0)
+  moment:
+    specifier: ^2.29.4
+    version: 2.29.4
   postcss:
     specifier: ^8.4.23
     version: 8.4.23
@@ -58,6 +64,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.0.1
     version: 3.2.0(postcss@8.4.23)(sass@1.62.1)(svelte@3.58.0)
+  svelte-time:
+    specifier: ^0.7.1
+    version: 0.7.1
   tailwindcss:
     specifier: ^3.3.2
     version: 3.3.2
@@ -931,6 +940,10 @@ packages:
       type: 1.2.0
     dev: true
 
+  /dayjs@1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: true
+
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -1578,6 +1591,10 @@ packages:
       minimist: 1.2.8
     dev: true
 
+  /moment@2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
+    dev: true
+
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -2123,6 +2140,12 @@ packages:
       strip-indent: 3.0.0
       svelte: 3.58.0
       typescript: 5.0.4
+    dev: true
+
+  /svelte-time@0.7.1:
+    resolution: {integrity: sha512-E7IL/85j7oj5fhxvmlau616TUbFfa6Vyy1PFTL3Y8SJGY6NXJaUj7DOYJrXVdoS3Rm9RVST0M6qWd6vqrYgM+w==}
+    dependencies:
+      dayjs: 1.11.7
     dev: true
 
   /svelte@3.58.0:

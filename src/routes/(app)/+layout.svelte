@@ -5,7 +5,14 @@
 	import '@skeletonlabs/skeleton/styles/all.css'
 	// Most of your app wide CSS should be put in this file
 	import '../../app.postcss'
-	import { AppShell, Toast, toastStore, type ToastSettings } from '@skeletonlabs/skeleton'
+	import {
+		AppShell,
+		Toast,
+		toastStore,
+		type ToastSettings,
+		Avatar,
+		LightSwitch
+	} from '@skeletonlabs/skeleton'
 
 	import { page } from '$app/stores'
 	import type { ActionData, PageData } from './$types'
@@ -25,7 +32,30 @@
 	import DatabaseSvg from '$lib/icons/DatabaseSVG.svelte'
 	import { messenger } from '$lib/ts/store/messenger'
 
-	function initials(name: string, arg?: { period: boolean }): string {
+	import moment from 'moment'
+	import Time from 'svelte-time'
+
+	// update locales for moment
+	moment.updateLocale('en', {
+		relativeTime: {
+			future: 'in %s',
+			past: '%s',
+			s: 'just now',
+			ss: '%ss',
+			m: '1m ago',
+			mm: '%dm ago',
+			h: '1h ago',
+			hh: '%dh ago',
+			d: '1d ago',
+			dd: '%dd ago',
+			M: '1M ago',
+			MM: '%dM ago',
+			y: '1y ago',
+			yy: '%dY ago'
+		}
+	})
+
+	function initial(name: string, arg?: { period: boolean }): string {
 		arg = arg || { period: false }
 		return name
 			.trim()
@@ -34,29 +64,36 @@
 			.join(arg.period ? '.' : '')
 	}
 
-	$: path = $page.url.pathname
-
 	export let data: PageData
 	export let form: ActionData
 
-	const name = data.user.split(';')[0] || 'John Doe'
-	const role = data.user.split(';')[2] || 'Developer'
+	const name = data?.user.split(';')[0] || 'John Doe'
+	const role = data?.user.split(';')[2] || 'Developer'
 
-	const errorMSG: ToastSettings = {
+	const errorMSG = {
 		message: form?.error || 'Something went wrong',
 		background: 'variant-filled-error'
-	}
+	} as ToastSettings
+
+	const offlineToast = {
+		message: "<h5>You are offline</h5>Some things won't work in offline.",
+		background: 'variant-filled-warning',
+		autohide: false,
+		classes: '!rounded-token'
+	} as ToastSettings
 
 	let showMessage = false
 	let div: HTMLDivElement
 	let text: string
+
+	$: path = $page.url.pathname
 
 	if (browser) afterUpdate(() => div?.scrollTo(0, div?.scrollHeight))
 
 	if (form?.error) toastStore.trigger(errorMSG)
 </script>
 
-<Toast />
+<Toast rounded="rounded-token" />
 
 <!-- App Shell -->
 <AppShell>
@@ -65,12 +102,12 @@
 			<div class="flex flex-col gap-6">
 				<section class="flex gap-3 items-center">
 					<div class="w-12 h-12 flex-shrink-0 grid place-items-center bg-surface-500 rounded-full">
-						<span class="font-semibold text-xs">{initials(name, { period: true })}</span>
+						<Avatar initials={initial(name)} width="w-auto" />
 					</div>
-					<div>
-						<h5>{name}</h5>
-						<p class="mt-0.5 !text-sm text-surface-100/40">{role}</p>
-					</div>
+					<a href="/profile" id="headerProfile" class="unstyled">
+						<h5 class="capitalize">{name}</h5>
+						<p class="mt-0.5 !text-sm text-surface-900-50-token opacity-60 capitalize">{role}</p>
+					</a>
 				</section>
 				<hr />
 				<section class="-mx-6 space-y-4">
@@ -119,7 +156,8 @@
 	<svelte:fragment slot="sidebarRight">
 		<div id="sidebar" class="flex flex-col gap-6">
 			<section class="flex justify-between items-center">
-				<a href="/" id="logo" class="unstyled font-semibold text-xl">FYP24</a>
+				<!-- <a href="/" id="logo" class="unstyled font-semibold text-xl">FYP24</a> -->
+				<LightSwitch />
 				<div class="space-x-4">
 					<button on:click={() => (showMessage = !showMessage)}
 						><MessageSvg filled={showMessage} /></button
@@ -131,17 +169,19 @@
 			<!-- message -->
 			{#if showMessage}
 				<section transition:fly={{ x: 200 }}>
-					<div class="bg-surface-900 p-3 rounded-xl h-60 overflow--hidden">
-						<div class="overflow-y-scroll space-y-4 h-full" bind:this={div}>
+					<div class="bg-surface-100-800-token p-3 rounded-xl h-60 overflow-hidden">
+						<div class="overflow-y-scroll space-y-4 h-full hide-scrollbar" bind:this={div}>
 							{#if data.messages.length > 0}
 								{#each data.messages as { user, message, created_at }}
 									<div class="flex flex-col gap-2">
 										<div class="flex items-center gap-1 [&>*]:!text-xs font-semibold">
-											<p class="text-primary-600">{user.split(' ')[0]}</p>
+											<p class="text-primary-400-500-token">{user?.split(' ')[0]}</p>
 											<!-- TODO: Add readable timestamp -->
-											<p class="text-surface-100/40">
+											<p class="text-surface-900-50-token opacity-40">
 												<span>&bullet;</span>
-												<span>date here</span>
+												<span>
+													<Time relative timestamp={created_at} />
+												</span>
 											</p>
 										</div>
 										<p class="unstyled text-xs font-medium">{message}</p>
@@ -198,12 +238,12 @@
 
 <style lang="postcss">
 	#sidebar {
-		@apply min-h-full w-64 p-6 bg-surface-800;
+		@apply min-h-full w-64 p-6 backdrop-blur-lg;
 	}
 	#sidebar section > * + * {
 		margin-top: 0.25rem;
 	}
-	#sidebar section a:not(#logo) {
+	#sidebar section a:not(#logo, #headerProfile) {
 		display: flex;
 		align-items: center;
 		gap: 1rem;

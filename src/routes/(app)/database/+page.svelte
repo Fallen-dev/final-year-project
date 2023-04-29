@@ -3,6 +3,7 @@
 	import { Table, tableMapperValues, toastStore, type ToastSettings } from '@skeletonlabs/skeleton'
 	import type { TableSource } from '@skeletonlabs/skeleton'
 	import type { ActionData, PageData } from './$types'
+	import { dayjs } from 'svelte-time'
 
 	export let data: PageData
 	export let form: ActionData
@@ -10,14 +11,22 @@
 	const tableData = data.messages || []
 	const facultyData = data.faculties || []
 
-	const messageTableData: TableSource = {
-		head: ['ID', 'User', 'Message'],
-		body: tableMapperValues(tableData, ['id', 'user', 'message']),
-		meta: tableMapperValues(tableData, ['id', 'user', 'message']),
-		foot: ['Total messages', '', tableData.length.toLocaleString()]
+	const messageTableData = tableData.map((data) => {
+		const timeFromNow = dayjs(data.created_at).format('DD MMM YY • hh:MM a')
+
+		return { id: data.id, user: data.user, message: data.message, created: timeFromNow }
+	})
+
+	console.log(messageTableData)
+
+	const messageTableSource: TableSource = {
+		head: ['ID', 'User', 'Message', 'created'],
+		body: tableMapperValues(messageTableData, ['id', 'user', 'message', 'created']),
+		meta: tableMapperValues(messageTableData, ['id', 'user', 'message']),
+		foot: ['Total messages', '', '', messageTableData.length.toLocaleString()]
 	}
 
-	const facultyTableData: TableSource = {
+	const facultyTableSource: TableSource = {
 		head: ['Name', 'Department'],
 		body: tableMapperValues(facultyData, ['Name', 'Department']),
 		foot: ['Total faculties', facultyData.length.toLocaleString()]
@@ -51,9 +60,9 @@
 	<p>You can delete the broadcast messages of this database.</p>
 	{#if tableData.length > 0}
 		<Table
-			source={messageTableData}
+			source={messageTableSource}
 			interactive={true}
-			regionFootCell="bg-surface-700"
+			regionFootCell="bg-surface-200-700-token"
 			regionFoot="font-semibold"
 			on:selected={(el) => updateMSG(el.detail)}
 		/>
@@ -64,7 +73,11 @@
 	<h3>Faculty table</h3>
 	<p>This table is read-only and cannot be modified.</p>
 	{#if facultyData.length > 0}
-		<Table source={facultyTableData} regionFootCell="bg-surface-700" regionFoot="font-semibold" />
+		<Table
+			source={facultyTableSource}
+			regionFootCell="bg-surface-200-700-token"
+			regionFoot="font-semibold"
+		/>
 	{:else}
 		<h6 class="text-center">No record found</h6>
 	{/if}
